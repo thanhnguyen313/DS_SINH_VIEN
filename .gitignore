@@ -1,0 +1,79 @@
+# ========================================
+# .NET / C# / WPF
+# ========================================
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## NuGet Packages
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+
+## Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+## User-specific files
+*.suo
+*.user
+*.userprefs
+*.sln.docstates
+
+## Build results
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.obj
+
+## MSBuild
+*.metaproj
+*.metaproj.tmp
+
+## Visual Studio profiler
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+## Rider / JetBrains
+.idea/
+*.sln.iml
+
+## VS Code
+.vscode/
+
+# ========================================
+# OS Generated
+# ========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ========================================
+# Misc
+# ========================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*~

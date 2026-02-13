@@ -1,0 +1,202 @@
+<Window x:Class="DS_SINH_VIEN.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Quản Lý Danh Sách Sinh Viên"
+        Width="850" Height="520"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        Background="#F0F2F5"
+        Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <!-- ===== STYLE CHUNG ===== -->
+
+        <!-- Style cho TextBlock label -->
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#37474F"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+
+        <!-- Style cho TextBox -->
+        <Style x:Key="InputStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="0,0,0,14"/>
+            <Setter Property="BorderBrush" Value="#CFD8DC"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#1976D2"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Style cho ComboBox -->
+        <Style x:Key="ComboStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+            <Setter Property="BorderBrush" Value="#CFD8DC"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <!-- Style cho Button Thêm -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#1976D2"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#1565C0"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#0D47A1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Style cho GroupBox -->
+        <Style x:Key="CardStyle" TargetType="GroupBox">
+            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1976D2"/>
+        </Style>
+    </Window.Resources>
+
+    <!-- ===== LAYOUT CHÍNH ===== -->
+    <Grid Margin="4">
+        <Grid.ColumnDefinitions>
+            <!-- Cột trái: Form nhập liệu (chiều rộng cố định) -->
+            <ColumnDefinition Width="280"/>
+            <!-- Cột phải: DataGrid (tự co giãn) -->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ========== CỘT 0: FORM NHẬP LIỆU ========== -->
+        <GroupBox Grid.Column="0" Header="📝 Nhập thông tin" Style="{StaticResource CardStyle}">
+            <StackPanel Margin="4,8,4,4">
+
+                <!-- MSSV -->
+                <TextBlock Text="Mã số sinh viên (MSSV):" Style="{StaticResource LabelStyle}"/>
+                <TextBox Name="txtMSSV" Style="{StaticResource InputStyle}"
+                         ToolTip="Nhập mã số sinh viên, ví dụ: SV001"/>
+
+                <!-- Họ Tên -->
+                <TextBlock Text="Họ và Tên:" Style="{StaticResource LabelStyle}"/>
+                <TextBox Name="txtHoTen" Style="{StaticResource InputStyle}"
+                         ToolTip="Nhập họ và tên đầy đủ"/>
+
+                <!-- Chương trình Đào tạo -->
+                <TextBlock Text="Chương trình đào tạo:" Style="{StaticResource LabelStyle}"/>
+                <ComboBox Name="cbCTDT" Style="{StaticResource ComboStyle}"
+                          DisplayMemberPath="TenCTDT"
+                          SelectedValuePath="MaCTDT"
+                          ToolTip="Chọn chương trình đào tạo"/>
+
+                <!-- Nút Thêm -->
+                <Button Name="btnThem" Content="➕  Thêm Sinh Viên"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="btnThem_Click"/>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- ========== CỘT 1: DATAGRID ========== -->
+        <GroupBox Grid.Column="1" Header="📋 Danh sách sinh viên" Style="{StaticResource CardStyle}">
+            <DataGrid Name="dgSinhVien"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      AlternatingRowBackground="#E3F2FD"
+                      RowBackground="White"
+                      BorderThickness="0"
+                      FontSize="13"
+                      SelectionMode="Single"
+                      ColumnHeaderHeight="36"
+                      RowHeight="32">
+
+                <!-- Style cho Header -->
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#1976D2"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="Padding" Value="10,0"/>
+                        <Setter Property="BorderBrush" Value="#1565C0"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <!-- Các cột dữ liệu -->
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="MSSV"
+                                        Binding="{Binding MSSV}"
+                                        Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="8,0"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Họ và Tên"
+                                        Binding="{Binding HoTen}"
+                                        Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="8,0"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="Chương trình ĐT"
+                                        Binding="{Binding TenCTDT}"
+                                        Width="160">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="8,0"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Foreground" Value="#1976D2"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+    </Grid>
+</Window>
