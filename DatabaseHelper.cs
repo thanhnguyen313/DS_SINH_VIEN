@@ -1,29 +1,29 @@
 using System;
 using System.Collections.Generic;
-using MySql.Data.MySqlClient;
+using Microsoft.Data.SqlClient;
 using DS_SINH_VIEN.Models;
 
 namespace DS_SINH_VIEN
 {
     /// <summary>
-    /// Lớp helper tĩnh để kết nối và thao tác với MySQL Database
+    /// Lớp helper tĩnh để kết nối và thao tác với SQL Server Database
     /// </summary>
     public static class DatabaseHelper
     {
         // ====================================================================
         // CONNECTION STRING
-        // ⚠️ Thay đổi Pwd nếu MySQL có mật khẩu
+        // ⚠️ Thay đổi Server name nếu SQL Server instance khác
         // ====================================================================
         private const string ConnectionString =
-            "Server=localhost; Port=3306; Database=DS_SINH_VIEN; Uid=root; Pwd=; CharSet=utf8mb4;";
+            @"Server=localhost\SQLEXPRESS; Database=DS_SINH_VIEN; Trusted_Connection=True; TrustServerCertificate=True;";
 
         /// <summary>
-        /// Tạo và mở kết nối tới MySQL
+        /// Tạo và mở kết nối tới SQL Server
         /// </summary>
-        /// <returns>MySqlConnection đã mở</returns>
-        public static MySqlConnection GetConnection()
+        /// <returns>SqlConnection đã mở</returns>
+        public static SqlConnection GetConnection()
         {
-            MySqlConnection connection = new MySqlConnection(ConnectionString);
+            SqlConnection connection = new SqlConnection(ConnectionString);
             connection.Open();
             return connection;
         }
@@ -36,19 +36,19 @@ namespace DS_SINH_VIEN
         {
             List<CTDT> danhSach = new List<CTDT>();
 
-            using (MySqlConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 string sql = "SELECT MaCTDT, TenCTDT FROM CTDT ORDER BY MaCTDT";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(sql, conn);
 
-                using (MySqlDataReader reader = cmd.ExecuteReader())
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         danhSach.Add(new CTDT
                         {
-                            MaCTDT = reader.GetInt32("MaCTDT"),
-                            TenCTDT = reader.GetString("TenCTDT")
+                            MaCTDT = reader.GetInt32(reader.GetOrdinal("MaCTDT")),
+                            TenCTDT = reader.GetString(reader.GetOrdinal("TenCTDT"))
                         });
                     }
                 }
@@ -65,7 +65,7 @@ namespace DS_SINH_VIEN
         {
             List<SinhVien> danhSach = new List<SinhVien>();
 
-            using (MySqlConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 string sql = @"
                     SELECT sv.MSSV, sv.HoTen, sv.MaCTDT, ct.TenCTDT
@@ -73,18 +73,18 @@ namespace DS_SINH_VIEN
                     INNER JOIN CTDT ct ON sv.MaCTDT = ct.MaCTDT
                     ORDER BY sv.MSSV";
 
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(sql, conn);
 
-                using (MySqlDataReader reader = cmd.ExecuteReader())
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
                         danhSach.Add(new SinhVien
                         {
-                            MSSV = reader.GetString("MSSV"),
-                            HoTen = reader.GetString("HoTen"),
-                            MaCTDT = reader.GetInt32("MaCTDT"),
-                            TenCTDT = reader.GetString("TenCTDT")
+                            MSSV = reader.GetString(reader.GetOrdinal("MSSV")),
+                            HoTen = reader.GetString(reader.GetOrdinal("HoTen")),
+                            MaCTDT = reader.GetInt32(reader.GetOrdinal("MaCTDT")),
+                            TenCTDT = reader.GetString(reader.GetOrdinal("TenCTDT"))
                         });
                     }
                 }
@@ -103,10 +103,10 @@ namespace DS_SINH_VIEN
         /// <returns>true nếu thêm thành công</returns>
         public static bool ThemSinhVien(string mssv, string hoTen, int maCTDT)
         {
-            using (MySqlConnection conn = GetConnection())
+            using (SqlConnection conn = GetConnection())
             {
                 string sql = "INSERT INTO SINHVIEN (MSSV, HoTen, MaCTDT) VALUES (@mssv, @hoten, @mactdt)";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                SqlCommand cmd = new SqlCommand(sql, conn);
 
                 // Parameterized query – an toàn, chống SQL Injection
                 cmd.Parameters.AddWithValue("@mssv", mssv);
