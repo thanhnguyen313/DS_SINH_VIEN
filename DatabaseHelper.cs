@@ -5,22 +5,13 @@ using DS_SINH_VIEN.Models;
 
 namespace DS_SINH_VIEN
 {
-    /// <summary>
-    /// Lớp helper tĩnh để kết nối và thao tác với SQL Server Database
-    /// </summary>
     public static class DatabaseHelper
     {
-        // ====================================================================
-        // CONNECTION STRING
-        // ⚠️ Thay đổi Server name nếu SQL Server instance khác
-        // ====================================================================
+        // Connection String – SQL Server Express, Windows Authentication
         private const string ConnectionString =
             @"Server=localhost\SQLEXPRESS; Database=DS_SINH_VIEN; Trusted_Connection=True; TrustServerCertificate=True;";
 
-        /// <summary>
-        /// Tạo và mở kết nối tới SQL Server
-        /// </summary>
-        /// <returns>SqlConnection đã mở</returns>
+        // Tạo và mở kết nối
         public static SqlConnection GetConnection()
         {
             SqlConnection connection = new SqlConnection(ConnectionString);
@@ -28,10 +19,7 @@ namespace DS_SINH_VIEN
             return connection;
         }
 
-        /// <summary>
-        /// Lấy danh sách Chương trình Đào tạo từ bảng CTDT
-        /// </summary>
-        /// <returns>List các đối tượng CTDT</returns>
+        // Lấy danh sách Chương trình Đào tạo
         public static List<CTDT> LoadCTDT()
         {
             List<CTDT> danhSach = new List<CTDT>();
@@ -57,10 +45,7 @@ namespace DS_SINH_VIEN
             return danhSach;
         }
 
-        /// <summary>
-        /// Lấy danh sách Sinh viên (có JOIN với CTDT để lấy tên chương trình)
-        /// </summary>
-        /// <returns>List các đối tượng SinhVien</returns>
+        // Lấy danh sách Sinh viên (JOIN với CTDT)
         public static List<SinhVien> LoadSinhVien()
         {
             List<SinhVien> danhSach = new List<SinhVien>();
@@ -93,14 +78,7 @@ namespace DS_SINH_VIEN
             return danhSach;
         }
 
-        /// <summary>
-        /// Thêm một sinh viên mới vào bảng SINHVIEN
-        /// Sử dụng Parameterized Query để chống SQL Injection
-        /// </summary>
-        /// <param name="mssv">Mã số sinh viên</param>
-        /// <param name="hoTen">Họ và tên</param>
-        /// <param name="maCTDT">Mã chương trình đào tạo</param>
-        /// <returns>true nếu thêm thành công</returns>
+        // Thêm sinh viên mới (Parameterized Query chống SQL Injection)
         public static bool ThemSinhVien(string mssv, string hoTen, int maCTDT)
         {
             using (SqlConnection conn = GetConnection())
@@ -108,7 +86,6 @@ namespace DS_SINH_VIEN
                 string sql = "INSERT INTO SINHVIEN (MSSV, HoTen, MaCTDT) VALUES (@mssv, @hoten, @mactdt)";
                 SqlCommand cmd = new SqlCommand(sql, conn);
 
-                // Parameterized query – an toàn, chống SQL Injection
                 cmd.Parameters.AddWithValue("@mssv", mssv);
                 cmd.Parameters.AddWithValue("@hoten", hoTen);
                 cmd.Parameters.AddWithValue("@mactdt", maCTDT);
